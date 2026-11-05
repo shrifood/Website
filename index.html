@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0b572b">
+<title>Shri Food | Order Online</title>
+<style>
+:root{--green:#0b572b;--green2:#176b38;--cream:#fff8e9;--gold:#d79b32;--ink:#241d16;--muted:#71685c;--line:#eadfc9}
+*{box-sizing:border-box}body{margin:0;background:#f7f2e8;color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{background:linear-gradient(130deg,#073d20,#126633);color:white;padding:25px 18px 22px;text-align:center}
+.brand{font-family:Georgia,serif;font-size:38px;font-weight:800;letter-spacing:2px}.tag{font-size:13px;opacity:.9;letter-spacing:1.5px;margin-top:3px}
+.headerline{margin:14px auto 0;max-width:600px;color:#fff3d5;font-size:14px}
+.wrap{max-width:1050px;margin:auto;padding:18px 14px 120px}
+.notice{background:#fff1cb;border:1px solid #f0d68d;border-radius:12px;padding:11px 14px;font-size:13px;margin-bottom:16px}
+.controls{display:flex;gap:10px;flex-wrap:wrap;margin:15px 0}
+#search{flex:1;min-width:180px;border:1px solid var(--line);border-radius:12px;padding:12px 14px;font:inherit;background:white}
+.tabs{display:flex;gap:8px;overflow:auto;padding:2px 0 10px}
+.tab{border:1px solid var(--line);background:white;color:var(--green);border-radius:99px;padding:9px 15px;white-space:nowrap;font-weight:650}
+.tab.active{background:var(--green);color:white;border-color:var(--green)}
+h2{font-size:21px;margin:22px 0 12px;color:var(--green)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.item{background:white;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 3px 12px #3c2a100a;display:flex;flex-direction:column;min-height:168px}
+.emoji{font-size:32px;margin-bottom:8px}.item h3{font-size:16px;margin:0 0 4px}.desc{font-size:12px;color:var(--muted);min-height:18px}
+.itembottom{display:flex;align-items:center;justify-content:space-between;margin-top:auto;padding-top:12px}
+.price{font-weight:800;color:var(--green);font-size:17px}
+.add{border:0;background:var(--green);color:white;border-radius:10px;padding:9px 14px;font-weight:750;cursor:pointer}
+.add:active,.tab:active{transform:scale(.97)}
+.combo .emoji{font-size:28px}
+.cartbar{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid var(--line);padding:12px 14px calc(12px + env(safe-area-inset-bottom));box-shadow:0 -5px 20px #241d1610;z-index:5}
+.cartinner{max-width:1050px;margin:auto;display:flex;align-items:center;gap:12px}
+.cartsummary{flex:1}.cartsummary strong{display:block;color:var(--green)}.cartsummary small{color:var(--muted)}
+.checkout{background:#159447;color:white;border:0;border-radius:12px;padding:13px 18px;font-weight:800;font-size:15px;cursor:pointer}
+.modal{display:none;position:fixed;inset:0;background:#0009;z-index:10;align-items:flex-end;justify-content:center}
+.modal.show{display:flex}
+.panel{background:#fffdf8;width:100%;max-width:620px;max-height:92vh;overflow:auto;border-radius:22px 22px 0 0;padding:20px}
+.panelhead{display:flex;justify-content:space-between;align-items:center}.panel h2{margin:0 0 12px}
+.close{border:0;background:#eee5d6;border-radius:50%;width:36px;height:36px;font-size:20px}
+.cartrow{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.cartname{flex:1}.cartname b{display:block}.cartname small{color:var(--muted)}
+.qty{display:flex;align-items:center;gap:9px}.qty button{width:29px;height:29px;border:0;border-radius:8px;background:#e8f1e9;color:var(--green);font-weight:900;font-size:17px}
+.total{display:flex;justify-content:space-between;font-size:19px;font-weight:850;padding:16px 0}
+label{display:block;font-size:13px;font-weight:700;margin:10px 0 5px}
+input,textarea,select{width:100%;padding:12px;border:1px solid var(--line);border-radius:10px;font:inherit;background:white}
+textarea{min-height:70px;resize:vertical}
+.send{width:100%;border:0;border-radius:12px;background:#159447;color:white;padding:15px;font-size:16px;font-weight:850;margin:14px 0 5px}
+.foot{text-align:center;color:var(--muted);font-size:12px;padding:24px 0}
+.empty{color:var(--muted);text-align:center;padding:20px}
+@media(min-width:700px){.modal{align-items:center}.panel{border-radius:22px}.brand{font-size:44px}}
+
+/* Mobile spacing: keep the fixed cart bar clear of Netlify's required badge */
+@media(max-width:699px){
+  .cartbar{bottom:76px;padding-bottom:12px}
+  .wrap{padding-bottom:210px}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="brand">SHRI FOOD</div>
+  <div class="tag">SAFIDON'S FIRST CLOUD KITCHEN</div>
+  <div class="headerline">Healthy • Tasty • Homemade<br>Freshly Prepared · Hygienic · Homemade</div>
+</header>
+<main class="wrap">
+  <div class="notice">🌿 No Palm Oil · Hygienic Preparation · Homemade Taste<br><b>Timing:</b> 11:00 AM – 9:00 PM &nbsp; | &nbsp; Free Home Delivery</div>
+  <div class="controls"><input id="search" type="search" placeholder="Search your favourite food..." aria-label="Search menu"></div>
+  <nav class="tabs" id="tabs"></nav>
+  <div id="menu"></div>
+  <div class="foot">Shri Food · Safidon · Made with love ♡<br>For assistance: +91 70153 91357</div>
+</main>
+<div class="cartbar">
+  <div class="cartinner">
+    <div class="cartsummary"><strong id="barCount">Your cart is empty</strong><small id="barTotal">Add delicious food to get started</small></div>
+    <button class="checkout" onclick="openCart()">View Cart · ₹<span id="barAmount">0</span></button>
+  </div>
+</div>
+<div class="modal" id="modal" onclick="if(event.target===this)closeCart()">
+ <section class="panel">
+  <div class="panelhead"><h2>Your Order</h2><button class="close" onclick="closeCart()">×</button></div>
+  <div id="cartItems"></div>
+  <div class="total"><span>Total</span><span>₹<span id="total">0</span></span></div>
+  <div style="margin:10px 0 14px;padding:10px 12px;border-radius:10px;background:#fff0cf;color:#65430b;font-weight:700;font-size:14px">Minimum order value: ₹99. Add items worth at least ₹99 to place your order.</div>
+  <form id="orderForm">
+   <label for="customer">Your name *</label><input id="customer" required autocomplete="name" maxlength="60" placeholder="Enter your full name">
+   <label for="phone">Phone number *</label><input id="phone" required type="tel" autocomplete="tel" inputmode="tel" pattern="[0-9 +()-]{10,16}" placeholder="Enter your 10-digit contact number">
+   <label for="type">Order type *</label><select id="type" required><option value="" selected disabled>Choose delivery or pickup</option><option value="Home Delivery">Home Delivery</option><option value="Self Pickup">Self Pickup</option></select>
+   <div id="addressWrap" style="display:none"><label for="address">Delivery address *</label><textarea id="address" required placeholder="House no., street, area, landmark"></textarea></div>
+   <fieldset style="border:1px solid var(--line);border-radius:12px;padding:12px;margin:14px 0">
+    <legend style="font-weight:800;color:var(--green);padding:0 6px">Choose payment method *</legend>
+    <label style="display:flex;align-items:center;gap:9px;margin:8px 0;font-size:15px"><input type="radio" name="payment" value="UPI" required style="width:auto"> UPI – Pay using QR / UPI app</label>
+    <label style="display:flex;align-items:center;gap:9px;margin:8px 0;font-size:15px"><input type="radio" name="payment" value="Cash on Delivery" required style="width:auto"> Cash on Delivery</label>
+   </fieldset>
+   <div id="upiInfo" class="notice" style="display:none;margin-top:10px">
+    <b>Pay securely using your UPI app</b><br>
+    <div id="upiThresholdMessage" style="margin-top:8px;font-weight:700;color:#8a5a00">Add items worth ₹99 to unlock the UPI QR code.</div>
+    UPI ID: <b>shrifood@naviaxis</b>
+    <div id="upiQrPanel" style="display:none;background:white;border:1px solid #eadfc9;border-radius:12px;padding:14px;margin-top:12px;text-align:center">
+     <div style="font-size:13px;color:#71685c">Scan this QR to pay your exact order total</div>
+     <div id="upiQr" style="display:flex;justify-content:center;padding:12px;min-height:210px;align-items:center"></div>
+     <div style="font-size:22px;font-weight:850;color:#0b572b">₹<span id="upiQrAmount">0</span></div>
+     <a id="upiPayLink" href="#" style="display:inline-block;margin-top:10px;background:#0b572b;color:white;text-decoration:none;padding:11px 16px;border-radius:10px;font-weight:750">Open UPI app on this phone</a>
+    </div>
+    <small style="display:block;margin-top:10px">After paying, return here and tap “Continue to WhatsApp” to send your order. Shri Food will verify the payment manually.</small>
+   </div>
+   <div style="margin:12px 0;padding:12px;border:1px solid var(--line);border-radius:12px;background:#fffdf8">
+    <strong>Share Google Maps location (optional)</strong>
+    <p style="margin:5px 0 9px;color:var(--muted);font-size:13px">You decide whether to share your location. Tap below to allow location access, or paste a Google Maps link.</p>
+    <button type="button" id="shareLocation" class="send" style="width:100%;margin:0 0 8px">📍 Share my current location</button>
+    <input id="mapsLink" type="url" placeholder="Or paste Google Maps link here" autocomplete="off">
+    <small id="locationStatus" style="display:block;margin-top:6px;color:var(--muted)">No location shared yet.</small>
+   </div>
+   <label for="notes">Special instructions (optional)</label><textarea id="notes" placeholder="Any instructions for your order..."></textarea>
+   <button class="send" type="submit">Continue to WhatsApp</button>
+   <small style="color:#71685c">Your order will be sent to Shri Food on WhatsApp for confirmation.</small>
+  </form>
+ </section>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const WHATSAPP = "917015391357";
+const MIN_ORDER = 99;
+const products = [
+ {name:"Aalu Chole Tikki (Desi Ghee)",price:79,cat:"Snacks",emoji:"🥘"},
+ {name:"Aalu Chole Tikki (Groundnut Oil)",price:59,cat:"Snacks",emoji:"🥘"},
+ {name:"Dahi Papdi",price:69,cat:"Snacks",emoji:"🥣"},
+ {name:"Royal Dahi Bhalla",price:69,cat:"Snacks",emoji:"🥣"},
+ {name:"Idli Sambhar (with Nariyal Chutni)",price:90,cat:"Snacks",emoji:"🍛"},
+ {name:"Medu Vada Sambar",price:79,cat:"Snacks",emoji:"🍩"},
+ {name:"Paneer Kathi Roll",price:99,cat:"Snacks",emoji:"🌯"},
+ {name:"Burger",price:75,cat:"Snacks",emoji:"🍔"},
+ {name:"Pav Bhaji",price:145,cat:"Snacks",emoji:"🍲"},
+ {name:"Extra Pav",price:15,cat:"Snacks",emoji:"🍞"},
+ {name:"Masala Dosa (2 Mini Dosa)",price:145,cat:"Dosas",emoji:"🥞"},
+ {name:"Butter Masala Dosa (2 Mini Dosa)",price:159,cat:"Dosas",emoji:"🥞"},
+ {name:"Extra Sambhar",price:30,cat:"Dosas",emoji:"🥣"},
+ {name:"Cheese Chilli Corn Grilled Sandwich",price:79,cat:"Sandwiches",emoji:"🥪"},
+ {name:"Tandoori Paneer Grill Sandwich",price:120,cat:"Sandwiches",emoji:"🥪"},
+ {name:"Veg Masala Grill Sandwich",price:99,cat:"Sandwiches",emoji:"🥪"},
+ {name:"Tikki 'N' Chill",price:79,cat:"Combos",emoji:"🥤",desc:"1 Tikki + 1 Coca Cola"},
+ {name:"Royal Bhalla Refresh",price:95,cat:"Combos",emoji:"🥤",desc:"1 Dahi Bhalla + 1 Coca Cola"},
+ {name:"Papdi 'N' Pop",price:95,cat:"Combos",emoji:"🥤",desc:"1 Dahi Papdi + 1 Coca Cola"},
+ {name:"Family Combo",price:249,cat:"Combos",emoji:"🍱",desc:"1 Tikki + 1 Dahi Bhalla + 1 Dahi Papdi + 2 Coca Cola"},
+ {name:"Fire 'N' Fizz",price:99,cat:"Combos",emoji:"🍔",desc:"1 Burger + 1 Coca Cola"},
+ {name:"Crispy Crunch Combo",price:149,cat:"Combos",emoji:"🍟",desc:"1 Tikki + 1 Dahi Papdi + 1 Coca Cola"},
+ {name:"Tikki 'N' Bhalla Combo",price:149,cat:"Combos",emoji:"🍱",desc:"1 Tikki + 1 Dahi Bhalla + 1 Coca Cola"},
+ {name:"Bhalla 'N' Papdi Combo",price:159,cat:"Combos",emoji:"🍱",desc:"1 Dahi Papdi + 1 Dahi Bhalla + 1 Coca Cola"}
+];
+let cart = {};
+let active = "All";
+const categories = ["All","Snacks","Dosas","Sandwiches","Combos"];
+const tabs = document.getElementById("tabs");
+categories.forEach(c=>{const b=document.createElement("button");b.className="tab"+(c==="All"?" active":"");b.textContent=c;b.onclick=()=>{active=c;document.querySelectorAll(".tab").forEach(x=>x.classList.toggle("active",x.textContent===c));render()};tabs.appendChild(b)});
+function render(){
+ const q=document.getElementById("search").value.toLowerCase();
+ const list=products.filter(p=>(active==="All"||p.cat===active)&&p.name.toLowerCase().includes(q));
+ const groups={};list.forEach(p=>(groups[p.cat]??=[]).push(p));
+ const menu=document.getElementById("menu");menu.innerHTML="";
+ Object.entries(groups).forEach(([cat,items])=>{
+  const h=document.createElement("h2");h.textContent=cat;menu.appendChild(h);
+  const grid=document.createElement("div");grid.className="grid";
+  items.forEach(p=>{
+   const i=products.indexOf(p),card=document.createElement("article");card.className="item"+(p.cat==="Combos"?" combo":"");
+   card.innerHTML=`<div class="emoji">${p.emoji}</div><h3>${p.name}</h3><div class="desc">${p.desc||"&nbsp;"}</div><div class="itembottom"><span class="price">₹${p.price}</span><button class="add" onclick="changeQty(${i},1)">+ Add</button></div>`;
+   grid.appendChild(card);
+  });menu.appendChild(grid);
+ });
+ if(!list.length)menu.innerHTML='<div class="empty">No items found. Try another search.</div>';
+}
+function count(){return Object.values(cart).reduce((a,b)=>a+b,0)}
+function amount(){return Object.entries(cart).reduce((s,[i,n])=>s+products[i].price*n,0)}
+function changeQty(i,d){cart[i]=(cart[i]||0)+d;if(cart[i]<=0)delete cart[i];update()}
+function refreshUpiQr(){
+ const total=amount();
+ const uri=`upi://pay?pa=shrifood@naviaxis&pn=${encodeURIComponent("Shri Food")}&am=${total}&cu=INR&tn=${encodeURIComponent("Shri Food order")}`;
+ const amountEl=document.getElementById("upiQrAmount");
+ const qrEl=document.getElementById("upiQr");
+ const payLink=document.getElementById("upiPayLink");
+ const qrPanel=document.getElementById("upiQrPanel");
+ const thresholdMessage=document.getElementById("upiThresholdMessage");
+ const unlocked=total>=MIN_ORDER;
+ if(qrPanel) qrPanel.style.display=unlocked?"block":"none";
+ if(thresholdMessage){
+  thresholdMessage.style.display=unlocked?"none":"block";
+  thresholdMessage.textContent=`UPI QR unlocks when your cart reaches ₹${MIN_ORDER}. Add ₹${Math.max(0,MIN_ORDER-total)} more.`;
+ }
+ if(amountEl) amountEl.textContent=total;
+ if(payLink) payLink.href=uri;
+ if(qrEl){
+  qrEl.innerHTML="";
+  if(unlocked && window.QRCode){
+   new QRCode(qrEl,{text:uri,width:190,height:190,colorDark:"#064b25",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});
+  }else if(unlocked){
+   qrEl.textContent="QR generator is unavailable. Use the UPI ID above.";
+  }
+ }
+}
+function update(){
+ document.getElementById("barCount").textContent=count()?`${count()} item${count()===1?"":"s"} in your cart`:"Your cart is empty";
+ document.getElementById("barTotal").textContent=!count()?"Add delicious food to get started":amount()<MIN_ORDER?`Minimum order ₹${MIN_ORDER} · Add ₹${MIN_ORDER-amount()} more`:"Minimum order reached · Ready to checkout";
+ document.getElementById("barAmount").textContent=amount();
+ document.getElementById("total").textContent=amount();
+ refreshUpiQr();
+ const el=document.getElementById("cartItems");el.innerHTML="";
+ if(!count()){el.innerHTML='<div class="empty">Your cart is empty. Add something tasty!</div>';return}
+ Object.entries(cart).forEach(([i,n])=>{
+  const p=products[i],row=document.createElement("div");row.className="cartrow";
+  row.innerHTML=`<div class="cartname"><b>${p.name}</b><small>₹${p.price} each · ₹${p.price*n}</small></div><div class="qty"><button onclick="changeQty(${i},-1)">−</button><b>${n}</b><button onclick="changeQty(${i},1)">+</button></div>`;
+  el.appendChild(row);
+ });
+}
+function openCart(){update();document.getElementById("modal").classList.add("show");document.body.style.overflow="hidden"}
+function closeCart(){document.getElementById("modal").classList.remove("show");document.body.style.overflow=""}
+document.getElementById("search").addEventListener("input",render);
+document.getElementById("type").addEventListener("change",e=>{
+ const delivery=e.target.value==="Home Delivery",wrap=document.getElementById("addressWrap"),address=document.getElementById("address");
+ wrap.style.display=delivery?"block":"none";address.required=delivery;if(!delivery)address.value="";
+});
+document.querySelectorAll('input[name="payment"]').forEach(r=>r.addEventListener("change",e=>{
+ document.getElementById("upiInfo").style.display=e.target.value==="UPI"?"block":"none";refreshUpiQr();
+}));
+document.getElementById("shareLocation").addEventListener("click",()=>{
+ const status=document.getElementById("locationStatus"),field=document.getElementById("mapsLink");
+ if(!navigator.geolocation){status.textContent="Location sharing is not supported. Paste a Google Maps link instead.";return}
+ status.textContent="Waiting for your permission to access location…";
+ navigator.geolocation.getCurrentPosition(pos=>{
+  const lat=pos.coords.latitude.toFixed(6),lon=pos.coords.longitude.toFixed(6);
+  field.value=`https://www.google.com/maps?q=${lat},${lon}`;
+  status.textContent="Location link added. It will be shared with Shri Food in your WhatsApp order.";
+ },err=>{
+  status.textContent=err.code===1?"Permission denied. Allow location access in browser settings or paste a Maps link.":"Location unavailable. Try again or paste a Maps link.";
+ },{enableHighAccuracy:true,timeout:15000,maximumAge:60000});
+});
+document.getElementById("orderForm").addEventListener("submit",e=>{
+ e.preventDefault();if(!count()){alert("Please add at least one item to your cart.");return}
+ if(amount()<MIN_ORDER){alert(`Minimum order is ₹${MIN_ORDER}. Please add items worth ₹${MIN_ORDER-amount()} more to continue.`);return}
+ const chosenPayment=document.querySelector('input[name="payment"]:checked');
+ if(!chosenPayment){alert("Please choose UPI or Cash on Delivery.");return}
+ const name=document.getElementById("customer").value.trim(),phone=document.getElementById("phone").value.trim(),type=document.getElementById("type").value,address=document.getElementById("address").value.trim(),notes=document.getElementById("notes").value.trim(),payment=chosenPayment.value,mapsLink=document.getElementById("mapsLink").value.trim();
+ if(type==="Home Delivery"&&!address){alert("Please enter your delivery address.");return}
+ const total=amount();
+ const upiLink=`upi://pay?pa=shrifood@naviaxis&pn=${encodeURIComponent("Shri Food")}&am=${total}&cu=INR&tn=${encodeURIComponent("Shri Food order")}`;
+ let lines=Object.entries(cart).map(([i,n])=>`• ${products[i].name} x ${n} = ₹${products[i].price*n}`).join("\n");
+ let paymentText=payment==="UPI"?`*Payment:* UPI\n*UPI ID:* shrifood@naviaxis\n*Pay exact amount:* ₹${total}\n*UPI payment link:* ${upiLink}\nPlease pay using the QR shown on the website or the UPI link, then share payment confirmation in this chat. Shri Food will verify receipt manually.`:"*Payment:* Cash on Delivery";
+ let msg=`*NEW ORDER - SHRI FOOD*\n\n*Customer:* ${name}\n*Phone:* ${phone}\n*Order type:* ${type}\n${type==="Home Delivery"?"*Address:* "+address+"\n":""}${mapsLink?"*Google Maps location:* "+mapsLink+"\n":""}\n*Items:*\n${lines}\n\n*Total: ₹${total}*\n${paymentText}\n${notes?"\n*Instructions:* "+notes:""}\n\nPlease confirm my order.`;
+ window.open(`https://wa.me/${WHATSAPP}?text=${encodeURIComponent(msg)}`,"_blank");
+});
+render();update();
+</script>
+</body>
+</html>
